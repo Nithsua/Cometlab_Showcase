@@ -1,31 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:newslife/services/getnews.dart';
 
-class NewsCollection extends ChangeNotifier {
+class HeadlineCollection extends ChangeNotifier {
   late List<News> newsCollection;
 
-  NewsCollection({required this.newsCollection});
+  HeadlineCollection({required this.newsCollection});
 
   refreshNews() async {
-    newsCollection = await NewsAPIService.getHeadlines();
+    try {
+      newsCollection = await NewsAPIService.getHeadlines();
+    } catch (e) {
+      print("Unable to reach probably no internet");
+      return;
+    }
     notifyListeners();
   }
 
   static List<News> fromJSON(Map<String, dynamic> json) {
-    final List<Map<String, dynamic>> articles = json["articles"];
+    final List<dynamic> articles = json["articles"];
+    return articles.map((article) => News.fromJSON(article)).toList();
+  }
+}
+
+class FeedCollection extends ChangeNotifier {
+  late List<News> newsCollection;
+
+  FeedCollection({required this.newsCollection});
+
+  refreshNews() async {
+    try {
+      newsCollection = await NewsAPIService.getFeed();
+    } catch (e) {
+      print("Unable to reach probably no internet");
+      return;
+    }
+    notifyListeners();
+  }
+
+  static List<News> fromJSON(Map<String, dynamic> json) {
+    final List<dynamic> articles = json["articles"];
     return articles.map((article) => News.fromJSON(article)).toList();
   }
 }
 
 class News {
-  late Source source;
-  late String author;
-  late String title;
-  late String description;
-  late String url;
-  late String urlToImage;
-  late DateTime? publishedAt;
-  late String content;
+  Source source;
+  String? author;
+  String? title;
+  String? description;
+  String? url;
+  String? urlToImage;
+  DateTime? publishedAt;
+  String? content;
 
   News(
       {required this.source,
@@ -44,18 +70,18 @@ class News {
     return News(
         source: source,
         author: author,
-        title: json["title"],
-        description: json["description"],
+        title: json["title"] ?? "",
+        description: json["description"] ?? "",
         publishedAt: publishedAt,
-        content: json["content"],
-        urlToImage: json["urlToImage"],
-        url: json["url"]);
+        content: json["content"] ?? "",
+        urlToImage: json["urlToImage"] ?? "",
+        url: json["url"] ?? "");
   }
 }
 
 class Source {
   String? id;
-  late String name;
+  String? name;
 
   Source({this.id, required this.name});
 

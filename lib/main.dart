@@ -1,104 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:newslife/models/news.dart';
-import 'package:newslife/services/getnews.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
+import 'package:newslife/views/home_view.dart';
 
-void main() => runApp(MainView());
+void main() {
+  SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+  runApp(MyApp());
+}
 
-class MainView extends StatelessWidget {
-  const MainView({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primarySwatch: Colors.black as MaterialColor,
+        fontFamily: "KaiseiHarunoUmi",
+        cardColor: Colors.white,
+        textTheme: TextTheme(
+            caption: Theme.of(context)
+                .textTheme
+                .caption
+                ?.apply(fontFamily: "Roboto")),
+        buttonTheme: ButtonThemeData(buttonColor: Colors.black),
+        primarySwatch: Colors.grey,
         brightness: Brightness.light,
-        appBarTheme: AppBarTheme(backgroundColor: Colors.white, elevation: 1.0),
+        appBarTheme: AppBarTheme(
+            backgroundColor: Colors.white,
+            elevation: 1.0,
+            systemOverlayStyle:
+                SystemUiOverlayStyle(statusBarIconBrightness: Brightness.dark)),
         scaffoldBackgroundColor: Colors.white,
       ),
       darkTheme: ThemeData(
-        primarySwatch: Colors.white as MaterialColor,
+        cardColor: Colors.black,
+        fontFamily: "KaiseiHarunoUmi",
+        textTheme: TextTheme(
+            caption: Theme.of(context)
+                .textTheme
+                .caption
+                ?.apply(fontFamily: "Roboto", color: Colors.white)),
+        primarySwatch: Colors.grey,
         brightness: Brightness.dark,
-        appBarTheme: AppBarTheme(backgroundColor: Colors.grey.shade800),
-        scaffoldBackgroundColor: Colors.white,
+        buttonTheme: ButtonThemeData(buttonColor: Colors.white),
+        appBarTheme: AppBarTheme(
+            backgroundColor: Colors.black,
+            systemOverlayStyle:
+                SystemUiOverlayStyle(statusBarIconBrightness: Brightness.dark)),
+        scaffoldBackgroundColor: Colors.black,
       ),
       themeMode: ThemeMode.system,
       home: HomeView(),
-    );
-  }
-}
-
-class HomeView extends StatelessWidget {
-  const HomeView({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (context, isScrolled) => [
-          SliverAppBar(
-            snap: true,
-            floating: true,
-            title: Text("BlogLife"),
-          )
-        ],
-        body: FutureBuilder(
-            future: NewsAPIService.getHeadlines(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done &&
-                  snapshot.hasData) {
-                final newsCollection = snapshot.data as List<News>;
-                return ChangeNotifierProvider(
-                    create: (context) =>
-                        NewsCollection(newsCollection: newsCollection),
-                    builder: (context, _) {
-                      return RefreshIndicator(
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                RichText(
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  text: TextSpan(
-                                      text: "Discover",
-                                      style:
-                                          Theme.of(context).textTheme.headline5,
-                                      children: [
-                                        TextSpan(
-                                          text: "Trending News",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headline5
-                                              ?.apply(fontWeightDelta: 2),
-                                        ),
-                                        TextSpan(
-                                          text: "Daily",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headline5,
-                                        )
-                                      ]),
-                                ),
-                                Column(
-                                  children: [],
-                                )
-                              ],
-                            ),
-                          ),
-                          onRefresh: () => Provider.of<NewsCollection>(context,
-                                  listen: false)
-                              .refreshNews());
-                    });
-              } else {
-                return Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.black,
-                  ),
-                );
-              }
-            }),
-      ),
     );
   }
 }
