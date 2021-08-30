@@ -195,6 +195,7 @@ class HomeView extends StatelessWidget {
                                         Theme.of(context).textTheme.headline6,
                                   ),
                                   ListView.builder(
+                                      physics: NeverScrollableScrollPhysics(),
                                       shrinkWrap: true,
                                       itemCount:
                                           Provider.of<FeedCollection>(context)
