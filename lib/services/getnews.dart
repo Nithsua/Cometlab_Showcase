@@ -43,4 +43,24 @@ class NewsAPIService {
     final newsCollection = FeedCollection.fromJSON(json);
     return newsCollection;
   }
+
+  static Future<List<News>> search(String searchQuery) async {
+    Uri url = Uri.https(host, "/v2/everything", {
+      "page": "1",
+      "pageSize": "100",
+      "q": searchQuery,
+      "sortBy": "publishedAt",
+      "excludeDomains": excludeDomains
+    });
+
+    final json;
+    try {
+      json = await HTTPService.requestData(url);
+    } catch (e) {
+      return Future.error(e);
+    }
+    print(json);
+    final newsCollection = FeedCollection.fromJSON(json);
+    return newsCollection;
+  }
 }

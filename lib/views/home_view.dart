@@ -7,18 +7,30 @@ import 'package:newslife/services/getnews.dart';
 import 'package:newslife/views/expanded_view.dart';
 import 'package:provider/provider.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
 
+  @override
+  _HomeViewState createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: (context, isScrolled) => [
           SliverAppBar(
+            automaticallyImplyLeading: false,
             snap: true,
             floating: true,
             title: Text("NewsLife"),
+            actions: [
+              IconButton(
+                  onPressed: () => showSearch(
+                      context: context, delegate: CustomSearchDelegate()),
+                  icon: Icon(Icons.search))
+            ],
           )
         ],
         body: FutureBuilder(
@@ -468,4 +480,186 @@ pushDialog(BuildContext context) {
       ],
     ),
   );
+}
+
+class CustomSearchDelegate extends SearchDelegate {
+  List<News> results = [];
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    return Theme.of(context);
+  }
+
+  // @override
+  // InputDecorationTheme? get searchFieldDecorationTheme => InputDecorationTheme(
+  //     border: InputBorder.none,
+  //     enabledBorder: InputBorder.none,
+  //     focusedBorder: InputBorder.none,
+  //     floatingLabelBehavior: FloatingLabelBehavior.never);
+
+  // @override
+  // TextStyle? get searchFieldStyle =>
+  //     TextStyle(fontSize: 20, fontFamily: "Roboto");
+
+  @override
+  Widget buildLeading(BuildContext context) => IconButton(
+      onPressed: () {
+        // Navigator.pop(context);
+        close(context, results);
+      },
+      icon: Icon(Icons.arrow_back));
+
+  @override
+  List<Widget> buildActions(BuildContext context) =>
+      [IconButton(onPressed: () => query = "", icon: Icon(Icons.close))];
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return Container();
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return FutureBuilder(
+        future: NewsAPIService.search(query),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasData) {
+            List<News> articles = snapshot.data as List<News>;
+            return ListView.builder(
+                physics: BouncingScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: articles.length,
+                itemBuilder: (context, position) {
+                  final article = articles[position];
+                  return Container(
+                    height: 120,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) => Card(
+                        elevation: 0.0,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ExpandedView(
+                                        article: article,
+                                        color: [
+                                          (Colors.pink[50])!,
+                                          (Colors.blue[50])!,
+                                          (Colors.brown[50])!,
+                                          (Colors.cyan[50])!,
+                                          (Colors.cyan[50])!
+                                        ][Random.secure().nextInt(5)])));
+                          },
+                          child: Row(
+                            children: [
+                              Container(
+                                width: constraints.maxWidth * 0.3,
+                                height: 120,
+                                child: Hero(
+                                  tag: article,
+                                  child: FadeInImage.assetNetwork(
+                                    placeholder:
+                                        "assets/images/placeholder.jpg",
+                                    image: article.urlToImage != null &&
+                                            article.urlToImage != ""
+                                        ? article.urlToImage!
+                                        : "https://i.pinimg.com/736x/53/ca/5f/53ca5f055ec0e2fc171dc1097aaacd3d.jpg",
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  width: constraints.maxWidth -
+                                      constraints.maxWidth * 0.3 -
+                                      50,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        article.title ?? "",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .subtitle1,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
+                                        child: Container(
+                                          width: constraints.maxWidth -
+                                              constraints.maxWidth * 0.3 -
+                                              60,
+                                          child: Row(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0),
+                                                child: Text(
+                                                  article.publishedAt != null
+                                                      ? DateFormat.MMMd()
+                                                          .format(article
+                                                              .publishedAt!)
+                                                      : DateFormat.MMMd()
+                                                          .format(
+                                                              DateTime.now()),
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .caption,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0),
+                                                child: Icon(
+                                                  Icons.circle,
+                                                  size: 5,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0),
+                                                child: SizedBox(
+                                                  width: constraints.maxWidth *
+                                                      0.2,
+                                                  child: Text(
+                                                    article.source.name ?? "",
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .caption,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                });
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        });
+  }
 }
