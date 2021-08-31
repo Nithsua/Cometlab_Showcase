@@ -6,7 +6,7 @@ class HeadlineCollection extends ChangeNotifier {
 
   HeadlineCollection({required this.newsCollection});
 
-  refreshNews() async {
+  Future<void> refreshNews() async {
     try {
       newsCollection = await NewsAPIService.getHeadlines();
     } catch (e) {
