@@ -1,11 +1,11 @@
 # NewsLife
 ### Flutter Project for CommtLab showcase
 
-A Simple, Minimalistic Flutter Application to fetch trending news and feeds from thousands of different sources. Uses ![News API](https://newsapi.org/) for news sources and the design is uses concept by ![Bhavna Kashyap](https://dribbble.com/bhavnakashyap)
+A Simple, Minimalistic Flutter Application to fetch trending news and feeds from thousands of different sources. Uses [News API](https://newsapi.org/) for news sources and design concept by [Bhavna Kashyap](https://dribbble.com/bhavnakashyap)
 
-Design inspiration(![link](https://dribbble.com/shots/11975184-Bloglife-News-App))
+[Design inspiration](https://dribbble.com/shots/11975184-Bloglife-News-App)
 
-### Some Screenshot for pleasure 😂
+### Some Screenshots for pleasure 😂
 <h3>Light Theme</h3></br>
 <p align= "center">
   <img src="https://user-images.githubusercontent.com/45146774/131454873-9c8d8eb9-135c-4311-8a70-fddb2baebf9b.png", width=300></img>
@@ -20,13 +20,13 @@ Design inspiration(![link](https://dribbble.com/shots/11975184-Bloglife-News-App
 ## Try it out
 
 ### For Android
-Just Download the APK from here ![newslife](https://drive.google.com/file/d/1MUm-EWF2opn0axpGyoU5Bq-AThL43vyN/view?usp=sharing) and install it
+Just Download the APK from [here](https://drive.google.com/file/d/1MUm-EWF2opn0axpGyoU5Bq-AThL43vyN/view?usp=sharing) and install it
 
-or clone the repo and run "flutter run"
+or clone the repo, create a directory called env inside lib and create file called env.dart declare a String variable called apiKey which holds the newsAPI key and run "flutter run"
 
 ### For iOS
 
-clone the repo and run "flutter run" (Mac is needed)
+clone the repo, create a directory called env inside lib and create file called env.dart declare a String variable called apiKey which holds the newsAPI key and run "flutter run" (Mac is needed)
 
 
 ### Flutter Resources
