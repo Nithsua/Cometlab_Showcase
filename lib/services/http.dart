@@ -14,6 +14,11 @@ class HTTPService {
     }
     print(response.statusCode);
     final Map<String, dynamic> json = jsonDecode(response.body);
+    if (json["status"] == "error") {
+      if (json["code"] == "apiKeyExhausted")
+        throw Exception("Exhausted API key");
+      throw Exception("Contact Developer");
+    }
     return json;
   }
 }
