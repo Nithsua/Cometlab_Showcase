@@ -87,11 +87,35 @@ class ExpandedView extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    article.publishedAt != null
-                        ? DateFormat.MMMd().format(article.publishedAt!)
-                        : DateFormat.MMMd().format(DateTime.now()),
-                    style: Theme.of(context).textTheme.caption,
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          article.publishedAt != null
+                              ? DateFormat.MMMd().format(article.publishedAt!)
+                              : DateFormat.MMMd().format(DateTime.now()),
+                          style: Theme.of(context).textTheme.caption,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Icon(
+                          Icons.circle,
+                          size: 5,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          article.source.name ?? "",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.caption,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Padding(

@@ -27,7 +27,7 @@ class FeedCollection extends ChangeNotifier {
 
   FeedCollection({required this.newsCollection});
 
-  refreshNews() async {
+  Future<void> refreshNews() async {
     try {
       newsCollection = await NewsAPIService.getFeed();
     } catch (e) {

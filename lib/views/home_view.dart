@@ -112,7 +112,7 @@ class HomeView extends StatelessWidget {
                                                                         50])!,
                                                                     (Colors.cyan[
                                                                         50])!,
-                                                                    (Colors.cyan[
+                                                                    (Colors.orange[
                                                                         50])!
                                                                   ][Random.secure()
                                                                       .nextInt(
@@ -164,21 +164,62 @@ class HomeView extends StatelessWidget {
                                                                     .ellipsis,
                                                           ),
                                                         ),
-                                                        Text(
-                                                          article.publishedAt !=
-                                                                  null
-                                                              ? DateFormat
-                                                                      .MMMd()
-                                                                  .format(article
-                                                                      .publishedAt!)
-                                                              : DateFormat
-                                                                      .MMMd()
-                                                                  .format(DateTime
-                                                                      .now()),
-                                                          style:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .caption,
+                                                        Row(
+                                                          children: [
+                                                            Padding(
+                                                              padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      8.0),
+                                                              child: Text(
+                                                                article.publishedAt !=
+                                                                        null
+                                                                    ? DateFormat
+                                                                            .MMMd()
+                                                                        .format(article
+                                                                            .publishedAt!)
+                                                                    : DateFormat
+                                                                            .MMMd()
+                                                                        .format(
+                                                                            DateTime.now()),
+                                                                style: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .caption,
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      8.0),
+                                                              child: Icon(
+                                                                Icons.circle,
+                                                                size: 5,
+                                                                color:
+                                                                    Colors.grey,
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      8.0),
+                                                              child: Text(
+                                                                article.source
+                                                                        .name ??
+                                                                    "",
+                                                                maxLines: 1,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .caption,
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ],
                                                     ),
@@ -210,6 +251,7 @@ class HomeView extends StatelessWidget {
                                           child: LayoutBuilder(
                                             builder: (context, constraints) =>
                                                 Card(
+                                              elevation: 0.0,
                                               child: InkWell(
                                                 onTap: () {
                                                   Navigator.push(
@@ -292,21 +334,70 @@ class HomeView extends StatelessWidget {
                                                                           .symmetric(
                                                                       vertical:
                                                                           8.0),
-                                                              child: Text(
-                                                                article.publishedAt !=
-                                                                        null
-                                                                    ? DateFormat
-                                                                            .MMMd()
-                                                                        .format(article
-                                                                            .publishedAt!)
-                                                                    : DateFormat
-                                                                            .MMMd()
-                                                                        .format(
-                                                                            DateTime.now()),
-                                                                style: Theme.of(
-                                                                        context)
-                                                                    .textTheme
-                                                                    .caption,
+                                                              child: Container(
+                                                                width: constraints
+                                                                        .maxWidth -
+                                                                    constraints
+                                                                            .maxWidth *
+                                                                        0.3 -
+                                                                    60,
+                                                                child: Row(
+                                                                  children: [
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                          horizontal:
+                                                                              8.0),
+                                                                      child:
+                                                                          Text(
+                                                                        article.publishedAt !=
+                                                                                null
+                                                                            ? DateFormat.MMMd().format(article.publishedAt!)
+                                                                            : DateFormat.MMMd().format(DateTime.now()),
+                                                                        style: Theme.of(context)
+                                                                            .textTheme
+                                                                            .caption,
+                                                                      ),
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                          horizontal:
+                                                                              8.0),
+                                                                      child:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .circle,
+                                                                        size: 5,
+                                                                        color: Colors
+                                                                            .grey,
+                                                                      ),
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                          horizontal:
+                                                                              8.0),
+                                                                      child:
+                                                                          SizedBox(
+                                                                        width: constraints.maxWidth *
+                                                                            0.2,
+                                                                        child:
+                                                                            Text(
+                                                                          article.source.name ??
+                                                                              "",
+                                                                          maxLines:
+                                                                              1,
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis,
+                                                                          style: Theme.of(context)
+                                                                              .textTheme
+                                                                              .caption,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                               ),
                                                             ),
                                                           ],
@@ -324,14 +415,22 @@ class HomeView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          onRefresh: () => Provider.of<FeedCollection>(context,
-                                  listen: false)
-                              .refreshNews());
+                          onRefresh: () async {
+                            await Provider.of<HeadlineCollection>(context,
+                                    listen: false)
+                                .refreshNews();
+                            await Provider.of<FeedCollection>(context,
+                                    listen: false)
+                                .refreshNews();
+                          });
                     });
               } else {
                 return Center(
                   child: CircularProgressIndicator(
-                    color: Colors.black,
+                    color: MediaQuery.of(context).platformBrightness ==
+                            Brightness.light
+                        ? Colors.black
+                        : Colors.white,
                   ),
                 );
               }
