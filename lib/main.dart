@@ -1,6 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:newslife/services/firebase.dart';
 import 'package:newslife/views/home_view.dart';
+import 'package:newslife/views/login_view.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
@@ -50,7 +54,30 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.black,
       ),
       themeMode: ThemeMode.system,
-      home: HomeView(),
+      home: FutureBuilder(
+          future: Firebase.initializeApp(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return StreamBuilder(
+                  stream: firebaseAuthServices.isSignedIn(),
+                  builder: (context, snapshot) {
+                    final user = snapshot.data as User?;
+                    if (user == null) {
+                      return LoginView();
+                    } else {
+                      return HomeView();
+                    }
+                  });
+            } else {
+              return Scaffold(
+                body: Column(
+                  children: [
+                    Center(child: CircularProgressIndicator()),
+                  ],
+                ),
+              );
+            }
+          }),
     );
   }
 }
