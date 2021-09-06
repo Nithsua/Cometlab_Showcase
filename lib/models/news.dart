@@ -39,7 +39,15 @@ class FeedCollection extends ChangeNotifier {
 
   static List<News> fromJSON(Map<String, dynamic> json) {
     final List<dynamic> articles = json["articles"];
-    return articles.map((article) => News.fromJSON(article)).toList();
+    List<News> news = [];
+    for (int i = 0; i < articles.length; i++) {
+      if (articles[i]["title"] != "" &&
+          articles[i]["url"] != "" &&
+          articles[i]["urlToImage"] != "") {
+        news.add(News.fromJSON(articles[i]));
+      }
+    }
+    return news;
   }
 }
 

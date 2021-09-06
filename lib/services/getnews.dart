@@ -3,14 +3,19 @@ import 'package:newslife/services/http.dart';
 
 String host = "newsapi.org";
 String excludeDomains = "";
+String language = "en";
+String country = "us";
 // String excludeDomains = "informationweek.com";
 
 class NewsAPIService {
   static Future<List<News>> getHeadlines() async {
     Uri url = Uri.https(host, "/v2/top-headlines", {
-      "country": "us",
+      "page": "1",
+      "pageSize": "10",
       "sortBy": "publishedAt",
-      "excludeDomains": excludeDomains
+      "excludeDomains": excludeDomains,
+      "language": language,
+      "country": country
     });
 
     final json;
@@ -30,7 +35,9 @@ class NewsAPIService {
       "pageSize": "50",
       "q": "tech",
       "sortBy": "publishedAt",
-      "excludeDomains": excludeDomains
+      "excludeDomains": excludeDomains,
+      "language": language,
+      // "country": country
     });
 
     final json;
@@ -50,6 +57,7 @@ class NewsAPIService {
       "pageSize": "100",
       "q": searchQuery,
       "sortBy": "publishedAt",
+      "language": language,
       "excludeDomains": excludeDomains
     });
 
