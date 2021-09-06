@@ -13,7 +13,7 @@ class ExpandedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(article.urlToImage);
+    print(article.urlToImage ?? "" + " " + (article.url ?? ""));
     return Scaffold(
       backgroundColor:
           MediaQuery.of(context).platformBrightness == Brightness.light

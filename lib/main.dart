@@ -18,7 +18,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        canvasColor: Colors.white,
         fontFamily: "KaiseiHarunoUmi",
         cardColor: Colors.white,
         textTheme: TextTheme(
@@ -37,6 +39,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
       ),
       darkTheme: ThemeData(
+        canvasColor: Colors.black,
         cardColor: Colors.black,
         fontFamily: "KaiseiHarunoUmi",
         textTheme: TextTheme(
@@ -65,7 +68,7 @@ class MyApp extends StatelessWidget {
                     if (user == null) {
                       return LoginView();
                     } else {
-                      return HomeView();
+                      return HomeView(user: user);
                     }
                   });
             } else {

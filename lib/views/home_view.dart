@@ -1,27 +1,92 @@
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:newslife/models/news.dart';
+import 'package:newslife/services/firebase.dart';
 import 'package:newslife/services/getnews.dart';
 import 'package:newslife/views/expanded_view.dart';
+import 'package:newslife/views/login_view.dart';
+
 import 'package:provider/provider.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({Key? key}) : super(key: key);
+  final User user;
+  HomeView({Key? key, required this.user}) : super(key: key);
 
   @override
   _HomeViewState createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
+  // final List<Map<String, dynamic> navigationRoutes = [{
+  //   "name": "World"
+  //   "route":
+  // }];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              // decoration: BoxDecoration(
+              //   image: DecorationImage(
+              //     image: AssetImage("assets/images/????"),
+              //     fit: BoxFit.cover,
+              //   ),
+              // ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: CircleAvatar(
+                      radius: 25.0,
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(25.0),
+                          child: FadeInImage(
+                            image: NetworkImage(widget.user.photoURL ?? ""),
+                            placeholder:
+                                AssetImage("assets/images/avatar.jpeg"),
+                          )),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Text(widget.user.displayName ?? "",
+                        overflow: TextOverflow.ellipsis),
+                  ),
+                  Text(widget.user.email ?? "",
+                      overflow: TextOverflow.ellipsis),
+                ],
+              ),
+            ),
+            ListTile(
+              onTap: () {
+                firebaseAuthServices.signOutFromGoogle();
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginView()),
+                    (route) => false);
+              },
+              title: Text(
+                "Sign Out",
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    ?.apply(color: Colors.red),
+              ),
+            )
+          ],
+        ),
+      ),
       body: NestedScrollView(
         headerSliverBuilder: (context, isScrolled) => [
           SliverAppBar(
-            automaticallyImplyLeading: false,
+            automaticallyImplyLeading: true,
             snap: true,
             floating: true,
             title: Text("NewsLife"),
@@ -259,7 +324,7 @@ class _HomeViewState extends State<HomeView> {
                                             Provider.of<FeedCollection>(context)
                                                 .newsCollection[position];
                                         return Container(
-                                          height: 120,
+                                          height: 300,
                                           child: LayoutBuilder(
                                             builder: (context, constraints) =>
                                                 Card(
@@ -288,13 +353,16 @@ class _HomeViewState extends State<HomeView> {
                                                                       .nextInt(
                                                                           5)])));
                                                 },
-                                                child: Row(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Container(
                                                       width:
-                                                          constraints.maxWidth *
-                                                              0.3,
-                                                      height: 120,
+                                                          constraints.maxWidth,
+                                                      height: constraints
+                                                              .maxHeight *
+                                                          0.6,
                                                       child: Hero(
                                                         tag: article,
                                                         child: FadeInImage
@@ -316,104 +384,97 @@ class _HomeViewState extends State<HomeView> {
                                                       padding:
                                                           const EdgeInsets.all(
                                                               8.0),
-                                                      child: Container(
-                                                        width: constraints
-                                                                .maxWidth -
-                                                            constraints
-                                                                    .maxWidth *
-                                                                0.3 -
-                                                            50,
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text(
-                                                              article.title ??
-                                                                  "",
-                                                              style: Theme.of(
-                                                                      context)
-                                                                  .textTheme
-                                                                  .subtitle1,
-                                                              maxLines: 2,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .symmetric(
-                                                                      vertical:
-                                                                          8.0),
-                                                              child: Container(
-                                                                width: constraints
-                                                                        .maxWidth -
-                                                                    constraints
-                                                                            .maxWidth *
-                                                                        0.3 -
-                                                                    60,
-                                                                child: Row(
-                                                                  children: [
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                              .symmetric(
-                                                                          horizontal:
-                                                                              8.0),
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            article.title ?? "",
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .subtitle1,
+                                                            maxLines: 2,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    vertical:
+                                                                        8.0),
+                                                            child: Container(
+                                                              width: constraints
+                                                                      .maxWidth -
+                                                                  constraints
+                                                                          .maxWidth *
+                                                                      0.3 -
+                                                                  60,
+                                                              child: Row(
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                        horizontal:
+                                                                            8.0),
+                                                                    child: Text(
+                                                                      article.publishedAt !=
+                                                                              null
+                                                                          ? DateFormat.MMMd().format(article
+                                                                              .publishedAt!)
+                                                                          : DateFormat.MMMd()
+                                                                              .format(DateTime.now()),
+                                                                      style: Theme.of(
+                                                                              context)
+                                                                          .textTheme
+                                                                          .caption,
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                        horizontal:
+                                                                            8.0),
+                                                                    child: Icon(
+                                                                      Icons
+                                                                          .circle,
+                                                                      size: 5,
+                                                                      color: Colors
+                                                                          .grey,
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                        horizontal:
+                                                                            8.0),
+                                                                    child:
+                                                                        SizedBox(
+                                                                      width: constraints
+                                                                              .maxWidth *
+                                                                          0.2,
                                                                       child:
                                                                           Text(
-                                                                        article.publishedAt !=
-                                                                                null
-                                                                            ? DateFormat.MMMd().format(article.publishedAt!)
-                                                                            : DateFormat.MMMd().format(DateTime.now()),
+                                                                        article.source.name ??
+                                                                            "",
+                                                                        maxLines:
+                                                                            1,
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
                                                                         style: Theme.of(context)
                                                                             .textTheme
                                                                             .caption,
                                                                       ),
                                                                     ),
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                              .symmetric(
-                                                                          horizontal:
-                                                                              8.0),
-                                                                      child:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .circle,
-                                                                        size: 5,
-                                                                        color: Colors
-                                                                            .grey,
-                                                                      ),
-                                                                    ),
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                              .symmetric(
-                                                                          horizontal:
-                                                                              8.0),
-                                                                      child:
-                                                                          SizedBox(
-                                                                        width: constraints.maxWidth *
-                                                                            0.2,
-                                                                        child:
-                                                                            Text(
-                                                                          article.source.name ??
-                                                                              "",
-                                                                          maxLines:
-                                                                              1,
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          style: Theme.of(context)
-                                                                              .textTheme
-                                                                              .caption,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
-                                                          ],
-                                                        ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     )
                                                   ],
